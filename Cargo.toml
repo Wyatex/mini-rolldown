@@ -1,0 +1,88 @@
+[workspace.package]
+edition = "2021"
+name = "mini-rolldown"
+homepage = "https://rolldown.rs/"
+license = "MIT"
+repository = "https://github.com/Wyatex/mini-rolldown.git"
+
+[workspace]
+members = ["./crates/*", "crates/rolldown", "crates/rolldown_binding"]
+resolver = "2"
+
+[workspace.dependencies]
+# Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
+napi = { version = "3.0.0-alpha", features = ["async"] }
+napi-build = { version = "2.1.3" }
+napi-derive = { version = "3.0.0-alpha", default-features = false, features = ["type-def"] }
+
+[profile.release]
+lto = true
+strip = "symbols"
+
+[workspace.lints.rust]
+
+
+#Clippy 是用于捕获常见错误和改进 Rust 代码的 lint 集合。它基于 Rust 编译器提供的插件机制，将各种 lint 检查注册到编译器中，在编译过程中对代码进行静态分析。
+#这些 lint 检查可以分为不同的类别，包括：
+#- **clippy::correctness**：检查完全错误或无用的代码，级别为 deny（deny），意味着出现这类问题可能会导致编译不通过。
+#- **clippy::suspicious**：检测很可能是错误或无用的代码，告警级别为警告（warn）。
+#- **clippy::style**：提示应该以更习惯的方式编写的代码，级别为 warn。
+#- **clippy::complexity**：指出以复杂方式完成简单工作的代码，级别为 warn。
+#- **clippy::perf**：发现可以被写得运行更快的代码，级别为 warn。
+#- **clippy::pedantic**：相当严格的 lint，但偶尔可能有误报，级别为允许（allow）。
+#- **clippy::nursery**：仍在开发中的新 lint，级别为 allow。
+#- **clippy::cargo**：适用于 cargo 的 lint，级别为 allow。
+#Clippy 的优点包括帮助开发者发现代码中的潜在问题，从而提高代码质量和安全性。它可以更容易地发现和修复错误，减少 bug 和性能问题。例如，它可能会检查出未使用的变量、潜在的内存泄漏、错误的类型转换、不符合风格指南的代码、可能的数组越界以及性能不佳的代码等，并给出相应的建议和警告。
+#要使用 Clippy，首先需要安装 Rust 和 Rust 的包管理器 Cargo。安装完成后，可以通过 Cargo 来运行 Clippy。例如，要检查一个名为 example.rs 的 Rust 文件，可以使用以下命令：`cargo clippy --manifest-path example.rs` 。
+#Clippy 中的大多数规则没有额外配置，但也有一些规则支持自定义配置，例如可以设置认知复杂度阈值、单字符绑定名称阈值等。此外，Clippy 还具有可定制化的特点，可以根据项目需求自定义 lint 等级，只关注需要的部分。同时，它方便使用，作为 Cargo 子命令，可以与日常开发流程无缝集成，并且某些 lint 还支持自动修复，简化修改过程。活跃的社区也会不断更新和维护 Clippy，持续出现新的 lint 和改进。
+[workspace.lints.clippy]
+# 指南
+# - 只有当规则是误报、混乱或没有意义时，我们才应全局禁用它们。
+# - 组以优先级 -1 启用，因此我们可以轻松覆盖某些特定规则。
+#   - https://doc.rust-lang.org/stable/cargo/reference/manifest.html#the-lints-section
+
+# --- 限制 https://doc.rust-lang.org/clippy/usage.html#clippyrestriction
+dbg_macro = "deny"
+print_stdout = "deny"
+
+# 我喜欢这条规则的明确性，因为它消除了围绕 `clone` 的困惑。
+# 这提高了可读性，避免了盲目地使用 `clone` 以及意外的堆分配。
+clone_on_ref_ptr = "deny"
+empty_drop = "deny"
+exit = "deny"
+filetype_is_file = "deny"
+get_unwrap = "deny"
+rc_buffer = "deny"
+rc_mutex = "deny"
+rest_pat_in_fully_bound_structs = "deny"
+unnecessary_safety_comment = "deny"
+
+# --- 严格检查 #https://doc.rust-lang.org/clippy/usage.html#clippypedantic
+# 为了编写最佳的 Rust 代码，严格检查组默认是启用的。
+pedantic = { level = "deny", priority = -1 }
+
+# Wizards, 取名太难了.
+module_inception = "allow"
+module_name_repetitions = "allow"
+similar_names = "allow"
+
+# 转发 `Result` 是一种常见模式，这条规则太过于吹毛求疵了。
+missing_errors_doc = "allow"
+
+# `#[must_use]` 对于这个代码库产生了过多的干扰，除了在 Clippy 运行后唠叨程序员添加 `#[must_use]` 之外，并没有增加太多价值。
+# 到处都有 `#[must_use]` 也会妨碍可读性。
+must_use_candidate = "allow"
+
+doc_markdown = "allow"
+missing_const_for_fn = "allow"
+needless_for_each = "allow"
+new_without_default = "allow"
+# TODO: 应该审查这条规则。
+missing_panics_doc = "allow"
+
+# 顺序其实并不重要 https://rust-lang.github.io/rust-clippy/master/index.html#/inconsistent_struct_constructor
+inconsistent_struct_constructor = "allow"
+
+# 单个匹配与 if/else 同样具有可读性。 https://rust-lang.github.io/rust-clippy/master/index.html#/single_match
+single_match = "allow"
+single_match_else = "allow"
