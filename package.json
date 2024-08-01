@@ -10,8 +10,10 @@
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
+    "@types/node": "^22.0.0",
     "ava": "^6.0.1",
-    "npm-rolldown": "npm:rolldown@0.12.1"
+    "npm-rolldown": "npm:rolldown@0.12.1",
+    "typescript": "^5.5.4"
   },
   "ava": {
     "timeout": "3m"

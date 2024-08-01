@@ -7,12 +7,22 @@
     "triples": {}
   },
   "license": "MIT",
+  "files": [
+    "bin",
+    "cli",
+    "dist",
+    "!dist/*.node"
+  ],
   "devDependencies": {
     "@napi-rs/cli": "^3.0.0-alpha.62",
-    "npm-rolldown": "npm:rolldown@0.12.1"
+    "fs-extra": "^11.2.0",
+    "glob": "^11.0.0",
+    "jiti": "^1.21.6",
+    "npm-rolldown": "npm:rolldown@0.12.1",
+    "vite": "^5.3.5"
   },
-  "ava": {
-    "timeout": "3m"
+  "bin": {
+    "mini-rolldown": "./bin/cli.js"
   },
   "engines": {
     "node": ">= 10"
@@ -21,9 +31,13 @@
     "artifacts": "napi artifacts",
     "build-binding": "napi build -o=./src --manifest-path ../../crates/rolldown_binding/Cargo.toml --platform -p rolldown_binding --js binding.js --dts binding.d.ts --no-const-enum --release",
     "build:debug": "napi build --platform",
+    "# Scrips for node #": "_",
+    "build-node": "node ../../node_modules/npm-rolldown/bin/cli.js -c ./rolldown.config.mjs",
+    "build-types": "tsc -p ./tsconfig.dts.json",
     "prepublishOnly": "napi prepublish -t packages/rolldown/npm",
     "test": "ava",
     "universal": "napi universal",
-    "version": "napi version"
+    "version": "napi version",
+    "mini-rolldown-debug": "node src/cli/index.ts"
   }
 }
